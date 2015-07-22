@@ -1,12 +1,10 @@
 {-# LANGUAGE OverloadedStrings  #-}
-module Database.Persistent.Instances.IP where
+module Database.Persist.Instances.IP where
 
 import Data.ByteString.Char8 (pack,unpack)
 import Data.IP
-import Data.IP.Internal
 import Data.Maybe (fromMaybe)
 import Database.Persist
-import Database.Persist.Types
 import Database.Persist.Sql
 import Text.Read (readMaybe)
 
