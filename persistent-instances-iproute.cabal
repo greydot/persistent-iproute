@@ -1,5 +1,5 @@
 name:                persistent-instances-iproute
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Persistent instances for types in iproute
 license:             BSD3
 license-file:        LICENSE
