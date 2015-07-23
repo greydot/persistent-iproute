@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings  #-}
 module Database.Persist.Instances.IP where
 
+import Control.Applicative (pure, (<$>))
 import Data.ByteString.Char8 (pack,unpack)
 import Data.IP
 import Data.Maybe (fromMaybe)
