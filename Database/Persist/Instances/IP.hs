@@ -1,7 +1,10 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings  #-}
 module Database.Persist.Instances.IP where
 
+#if __GLASGOW_HASKELL__ <= 708
 import Control.Applicative (pure, (<$>))
+#endif
 import Data.Aeson
 import Data.Aeson.Types (typeMismatch)
 import Data.ByteString.Char8 (pack,unpack)

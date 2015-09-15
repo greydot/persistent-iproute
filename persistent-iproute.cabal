@@ -11,6 +11,7 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     Database.Persist.IP
+  other-modules:       Database.Persist.Instances.IP
   build-depends:       base >=4 && <5,
                        aeson,
                        bytestring,
