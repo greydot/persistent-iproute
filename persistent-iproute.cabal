@@ -1,5 +1,5 @@
 name:                persistent-iproute
-version:             0.1.0.1
+version:             0.2
 synopsis:            Persistent instances for types in iproute
 license:             BSD3
 license-file:        LICENSE
@@ -13,9 +13,10 @@ library
   exposed-modules:     Database.Persist.IP
   other-modules:       Database.Persist.Instances.IP
   build-depends:       base >=4 && <5,
-                       aeson,
+                       aeson >= 0.8,
+                       aeson-iproute >= 0.1,
                        bytestring,
-                       iproute,
+                       iproute >= 1.5,
                        path-pieces,
                        persistent,
                        text
