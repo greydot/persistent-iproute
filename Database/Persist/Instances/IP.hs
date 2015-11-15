@@ -13,6 +13,7 @@ import qualified Data.Text as T
 import Database.Persist
 import Database.Persist.Sql
 import Text.Read (readMaybe)
+import Web.HttpApiData (ToHttpApiData(..),FromHttpApiData(..))
 import Web.PathPieces (PathPiece(..))
 
 instance PersistField IP where
@@ -40,3 +41,19 @@ instance PathPiece IPRange where
 instance PathPiece IP where
     fromPathPiece = readMaybe . T.unpack
     toPathPiece = T.pack . show
+
+instance ToHttpApiData IP where
+    toUrlPiece = T.pack . show
+
+instance ToHttpApiData IPRange where
+    toUrlPiece = T.pack . show
+
+instance FromHttpApiData IP where
+    parseUrlPiece txt
+        | Just ip <- readMaybe $ T.unpack txt = Right ip
+        | otherwise = Left "Unable to parse IP"
+
+instance FromHttpApiData IPRange where
+    parseUrlPiece txt
+        | Just ip <- readMaybe $ T.unpack txt = Right ip
+        | otherwise = Left "Unable to parse IPRange"

@@ -17,6 +17,7 @@ library
                        aeson-iproute >= 0.1,
                        bytestring,
                        iproute >= 1.5,
+                       http-api-data,
                        path-pieces,
                        persistent,
                        text
