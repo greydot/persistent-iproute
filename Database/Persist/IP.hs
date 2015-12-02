@@ -4,6 +4,8 @@
 --   for more detailed documentation
 module Database.Persist.IP ( (<:<.)
                            , (>:>.)
+                           , (<:<=)
+                           , (>:>=)
                            , (<.<.)
                            , (>.>.)
                            , IP
@@ -22,6 +24,14 @@ field <:<. range = Filter field (Left range) (BackendSpecificFilter "<<")
 -- | The record range contains the specified range. Corresponds to PgSQL operator >>.
 (>:>.) :: EntityField record IPRange -> IPRange -> Filter record
 field >:>. range = Filter field (Left range) (BackendSpecificFilter ">>")
+
+-- | The record range is contained within or equals to the specified range. Corresponds to PgSQL operator <<=.
+(<:<=) :: EntityField record IPRange -> IPRange -> Filter record
+field <:<= range = Filter field (Left range) (BackendSpecificFilter "<<=")
+
+-- | The record range contains or equals to the specified range. Corresponds to PgSQL operator >>=.
+(>:>=) :: EntityField record IPRange -> IPRange -> Filter record
+field >:>= range = Filter field (Left range) (BackendSpecificFilter ">>=")
 
 -- | The record address is contained within the specified range. Corresponds to PgSQL operator <<.
 (<.<.) :: EntityField record IP -> IPRange -> Filter record
