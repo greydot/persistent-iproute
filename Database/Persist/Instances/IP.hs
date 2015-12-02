@@ -34,6 +34,9 @@ instance PersistField IPRange where
 instance PersistFieldSql IPRange where
     sqlType _ = SqlOther "CIDR"
 
+
+-- The following instances don't really make sense, but persistent
+-- requires them so I defined them anyway.
 instance PathPiece IPRange where
     fromPathPiece = readMaybe . T.unpack
     toPathPiece = T.pack . show
