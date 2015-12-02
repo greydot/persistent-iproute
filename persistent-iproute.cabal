@@ -1,6 +1,7 @@
 name:                persistent-iproute
 version:             0.2
 synopsis:            Persistent instances for types in iproute
+description:         Persistent instances and operators for types in iproute to use with PostgreSQL.
 license:             BSD3
 license-file:        LICENSE
 author:              Lana Black
