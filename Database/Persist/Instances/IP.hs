@@ -38,8 +38,8 @@ instance PersistFieldSql IPRange where
 -- The following instances don't really make sense, but persistent
 -- requires them so I defined them anyway.
 instance PathPiece IPRange where
-    fromPathPiece = readMaybe . T.unpack
-    toPathPiece = T.pack . show
+    fromPathPiece = readMaybe . T.unpack . T.replace "%2F" "/"
+    toPathPiece = T.replace "/" "%2F" . T.pack . show
 
 instance PathPiece IP where
     fromPathPiece = readMaybe . T.unpack
@@ -49,7 +49,7 @@ instance ToHttpApiData IP where
     toUrlPiece = T.pack . show
 
 instance ToHttpApiData IPRange where
-    toUrlPiece = T.pack . show
+    toUrlPiece = T.replace "/" "%2F" . T.pack . show
 
 instance FromHttpApiData IP where
     parseUrlPiece txt
@@ -58,5 +58,5 @@ instance FromHttpApiData IP where
 
 instance FromHttpApiData IPRange where
     parseUrlPiece txt
-        | Just ip <- readMaybe $ T.unpack txt = Right ip
+        | Just ipr <- readMaybe . T.unpack $ T.replace "%2F" "/" txt = Right ipr
         | otherwise = Left "Unable to parse IPRange"
