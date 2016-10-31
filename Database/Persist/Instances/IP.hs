@@ -23,7 +23,11 @@ instance PersistField IP where
     fromPersistValue _ = Left "IP must be converted from PersistDbSpecific"
 
 instance PersistFieldSql IP where
+#ifdef USE_IP4R
+    sqlType _ = SqlOther "IPADDRESS"
+#else
     sqlType _ = SqlOther "INET"
+#endif
 
 instance PersistField IPRange where
     toPersistValue = PersistDbSpecific . pack . show
@@ -32,7 +36,11 @@ instance PersistField IPRange where
     fromPersistValue _ = Left "IPRange must be converted from PersistDbSpecific"
 
 instance PersistFieldSql IPRange where
+#ifdef USE_IP4R
+    sqlType _ = SqlOther "IPRANGE"
+#else
     sqlType _ = SqlOther "CIDR"
+#endif
 
 
 -- The following instances don't really make sense, but persistent
