@@ -26,7 +26,7 @@ library
                        iproute >= 1.5,
                        http-api-data,
                        path-pieces,
-                       persistent >= 2.10.0,
+                       persistent,
                        text
   default-language:    Haskell2010
   ghc-options:       -Wall -fno-warn-orphans
