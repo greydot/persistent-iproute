@@ -6,9 +6,8 @@ module Database.Persist.Instances.IP where
 import Control.Applicative (pure, (<$>))
 #endif
 import Data.Aeson.IP ()
-import Data.ByteString.Char8 (pack,unpack)
+import Data.ByteString.Char8 (ByteString, pack,unpack)
 import Data.IP (IPRange, IP)
-import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Database.Persist
 import Database.Persist.Sql
@@ -16,11 +15,36 @@ import Text.Read (readMaybe)
 import Web.HttpApiData (ToHttpApiData(..),FromHttpApiData(..))
 import Web.PathPieces (PathPiece(..))
 
-instance PersistField IP where
-    toPersistValue = PersistDbSpecific . pack . show
+note :: Maybe b -> T.Text -> Either T.Text b
+{-# INLINE note #-}
+note x y = maybe (Left y) Right x
 
-    fromPersistValue (PersistDbSpecific v) = fromMaybe (Left "Unable to parse IP") (pure <$> readMaybe (unpack v))
-    fromPersistValue _ = Left "IP must be converted from PersistDbSpecific"
+ctor :: ByteString -> PersistValue
+{-# INLINE ctor #-}
+
+ctorName :: T.Text
+{-# INLINE ctorName #-}
+
+unCtor :: PersistValue -> Maybe ByteString
+{-# INLINE unCtor #-}
+
+#if MIN_VERSION_persistent(2,11,0)
+ctor = PersistLiteralEscaped
+ctorName = "PersistLiteralEscaped"
+unCtor x = case x of {PersistLiteralEscaped y -> Just y; _ -> Nothing}
+#else
+ctor = PersistDbSpecific
+ctorName = "PersistDbSpecific"
+unCtor x = case x of {PersistDbSpecific y -> Just y; _ -> Nothing}
+#endif
+
+instance PersistField IP where
+    toPersistValue = ctor . pack . show
+
+    fromPersistValue pval = do
+        ipBS <- unCtor pval `note` mconcat ["IP must be converted from ", ctorName]
+        let ipStr = unpack ipBS
+        readMaybe ipStr `note` mconcat ["Unable to parse IP: ", T.pack ipStr]
 
 instance PersistFieldSql IP where
 #ifdef USE_IP4R
@@ -30,10 +54,12 @@ instance PersistFieldSql IP where
 #endif
 
 instance PersistField IPRange where
-    toPersistValue = PersistDbSpecific . pack . show
+    toPersistValue = ctor . pack . show
 
-    fromPersistValue (PersistDbSpecific v) = fromMaybe (Left "Unable to parse IPRange") (pure <$> readMaybe (unpack v))
-    fromPersistValue _ = Left "IPRange must be converted from PersistDbSpecific"
+    fromPersistValue pval = do
+        iprBS <- unCtor pval `note` mconcat ["IPRange must be converted from ", ctorName]
+        let iprStr = unpack iprBS
+        readMaybe iprStr `note` mconcat ["Unable to parse IPRange: ", T.pack iprStr]
 
 instance PersistFieldSql IPRange where
 #ifdef USE_IP4R
@@ -62,9 +88,9 @@ instance ToHttpApiData IPRange where
 instance FromHttpApiData IP where
     parseUrlPiece txt
         | Just ip <- readMaybe $ T.unpack txt = Right ip
-        | otherwise = Left "Unable to parse IP"
+        | otherwise = Left $ mconcat ["Unable to parse IP: ", txt]
 
 instance FromHttpApiData IPRange where
     parseUrlPiece txt
         | Just ipr <- readMaybe . T.unpack $ T.replace "%2F" "/" txt = Right ipr
-        | otherwise = Left "Unable to parse IPRange"
+        | otherwise = Left $ mconcat ["Unable to parse IPRange: ", txt]
